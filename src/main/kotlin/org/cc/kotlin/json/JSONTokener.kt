@@ -1,8 +1,6 @@
 package org.cc.kotlin.json
 
-import org.json.JSONArray
 import org.json.JSONException
-import org.json.JSONObject
 import java.io.*
 
 /*
@@ -366,11 +364,11 @@ class JSONTokener(reader: Reader) {
             '"', '\'' -> return nextString(c)
             '{' -> {
                 back()
-                return JSONObject(this)
+                return JOMap(this)
             }
             '[' -> {
                 back()
-                return JSONArray(this)
+                return JOArray(this)
             }
         }
 
@@ -394,7 +392,7 @@ class JSONTokener(reader: Reader) {
         if ("" == string) {
             throw this.syntaxError("Missing value")
         }
-        return JSONObject.stringToValue(string)
+        return strToValue(string)
     }
 
     /**

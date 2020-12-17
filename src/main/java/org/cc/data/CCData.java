@@ -1,6 +1,8 @@
 package org.cc.data;
 
 import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class CCData {
 
@@ -58,6 +60,21 @@ public class CCData {
         return (buf != null) ? new String(buf, enc) : null;
     }
 
+    public static List<String> loadList(File f, String enc) throws Exception {
+        List<String> ret = new ArrayList<String>();
+        BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(f), enc));
+        try {
+            String line = null;
+            while ((line = br.readLine()) != null) {
+                ret.add(line);
+            }
+        } finally {
+            br.close();
+        }
+        return ret;
+    }
+
+
     public static void saveText(String text, File f, String enc) throws Exception {
         OutputStreamWriter osw = null;
         try {
@@ -95,6 +112,56 @@ public class CCData {
             old = null; // gc
         }
         return new String(data, enc);
+    }
+
+    public static boolean isBOM(byte[] buf) {
+        return (buf != null && buf.length > 3
+            && (buf[0] & 0xFF) == 0xEF
+            && (buf[1] & 0xFF) == 0xBB
+            && (buf[2] & 0xFF) == 0xBF);
+    }
+
+    private static void _copy(InputStream in, OutputStream out) throws IOException {
+        byte[] buffer = new byte[1024];
+        int length = 0;
+        while ((length = in.read(buffer)) > 0) {
+            out.write(buffer, 0, length);
+        }
+    }
+
+    public static void copy(String src, String dest) throws IOException {
+        copy(new File(src), new File(dest));
+    }
+
+    public static void copy(File src, File dest) throws IOException {
+        if (src.isDirectory()) {
+            if (!dest.exists()) {
+                dest.mkdirs();
+            }
+            String files[] = src.list();
+            for (String file : files) {
+                //construct the src and dest file structure
+                File srcFile = new File(src, file);
+                File destFile = new File(dest, file);
+                //recursive copy
+                copy(srcFile, destFile);
+            }
+        } else {
+            if(src.exists()) {
+                InputStream in = new FileInputStream(src);
+                File pfile = dest.getParentFile();
+                if (!pfile.exists()) {
+                    pfile.mkdirs();
+                }
+                OutputStream out = new FileOutputStream(dest);
+                try {
+                    _copy(in, out);
+                } finally {
+                    in.close();
+                    out.close();
+                }
+            }
+        }
     }
 
 }

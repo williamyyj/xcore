@@ -35,7 +35,7 @@ public class MVELTest {
     @Test
     public void test_bean() throws Exception {
         Map<String, Class<? extends Node>> custNodes = new HashMap<String, Class<? extends Node>>();
-        CCProcObject proc = new CCProcObject(CCConst.base("webPos"));
+        CCProcObject proc = new CCProcObject(CCConst.base("wpos"));
         CCMap varPool = new CCMap();
         varPool.put("$root", CCConst.root);
         varPool.put("$proc", proc);

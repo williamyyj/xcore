@@ -1,6 +1,15 @@
 package org.cc.kotlin.json
 
 
+import java.text.ParseException
+import java.text.SimpleDateFormat
+import java.util.*
+
+var sfmt = "yyyyMMdd"
+var lfmt = "yyyyMMddHHmmss"
+var afmt = "yyyyMMddHHmmssSSS"
+var cstfmt = "EEE MMM dd HH:mm:ss zzz yyyy"
+
 fun asInt(o: Any?, dv: Int): Int {
     try {
         if (o is Number) {
@@ -50,7 +59,49 @@ fun asBoolean(o: Any?, dv: Boolean): Boolean {
     }
 }
 
-@JvmOverloads
 fun asString(o: Any?, dv: String? = ""): String {
     return o?.toString()?.trim { it <= ' ' } ?: dv!!
+}
+
+
+fun asDate(o: Any?): Date? {
+    if (o is Date) {
+        return o
+    } else if (o is String) {
+        return to_date(o)
+    }
+    return null
+}
+
+fun to_date(text: String): Date? {
+    if (text.contains("CST ")) {
+        return to_cst(text)
+    }
+    val str = text.replace("[^0-9\\.]+".toRegex(), "")
+    val len = str.length
+    when (len) {
+        8 -> return to_date(sfmt, str)
+        14 -> return to_date(lfmt, str)
+    }
+    return null
+}
+
+fun to_date(fmt: String, text: String): Date? {
+    val sdf = SimpleDateFormat(fmt)
+    try {
+        return sdf.parse(text)
+    } catch (ex: ParseException) {
+        //CCLogger.warn("Can't cast $fmt,$text")
+    }
+    return null
+}
+
+fun to_cst(text: String?): Date? {
+    val sdf = SimpleDateFormat(cstfmt, Locale.US)
+    try {
+        return sdf.parse(text)
+    } catch (ex: ParseException) {
+        ex.printStackTrace()
+    }
+    return null
 }

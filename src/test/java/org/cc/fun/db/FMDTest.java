@@ -15,14 +15,16 @@ public class FMDTest {
     @Test
     public void test_jometadata() throws Exception {
        // String base = CCConst.base("stock");
-       String base = CCConst.base("baphiq");
+       //String base = CCConst.base("baphiq");
+        String base = CCConst.base("wpos");
         CCProcObject proc = new CCProcObject(base,"db");
         try {                  
             //String metaId = "psSaleForeign";
             //String metaId = "psBaphiqE1Info";
             //String metaId = "rawMaterialManufacture";
             //String metaId = "rawMaterialImport";
-            String metaId = "rawMaterialMixRatio";
+            //String metaId =
+            String metaId = "posCusFarmData";
             proc.params().put("table", metaId);
             System.out.println("-----------------------------------------------------");
             System.out.println(proc.params());
